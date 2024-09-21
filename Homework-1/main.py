@@ -37,14 +37,9 @@ async def app(scope, receive, send) -> None:
         elif path.startswith('/fibonacci'):
             try:
                 # Извлечение параметра n: int из query_string
-                params = dict(q.split('=') for q in query_string.split('&'))
-
-                # Error 422 - Unprocessable entity (нет параметра)
-                if 'n' not in params:
-                    return await send_response(send, 422, {'error': "Missing parameter 'n'."})
+                n = int(path.split('/')[-1])
                 
                 # Error 400 - Bad request
-                n = int(params['n'])
                 if n < 0:
                     return await send_response(send, 400, {'error': "Parameter 'n' must be a non-negative integer."})
                 
@@ -77,8 +72,8 @@ async def app(scope, receive, send) -> None:
             await send_response(send, 404, {'error': 'Not Found'})
 
     else:
-        # Error 405 - Method Not Allowed
-        await send_response(send, 405, {'error': 'Method Not Allowed.'})
+        # Error 404 - Not Found
+        await send_response(send, 404, {'error': 'Not Found.'})
 
 
 async def send_response(send, status_code: int, body: dict) -> None:
